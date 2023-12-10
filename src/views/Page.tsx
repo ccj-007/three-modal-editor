@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RadioChangeEvent } from "antd/lib";
 import "dayjs/locale/zh-cn";
 import dayjs from "dayjs";
@@ -7,13 +7,14 @@ import { ConfigProvider, Button } from "antd";
 import T from "../langs/T";
 import useStore from "../store";
 import { Locale } from "antd/es/locale";
-import { GeomeryObj, GeomeryViewObj } from "../types/edit";
+import { GeomeryObj, GeomeryViewObj, GEOMARY } from "../types/edit";
 import { v4 as uuidv4 } from "uuid";
 import zhCN from "antd/locale/zh_CN";
 import enUS from "antd/locale/en_US";
 import { clear } from "../three/utils/clear";
 import { reset } from "../three/utils/reset";
-
+import GuiComp from "./GUI";
+import { onModelImport, onModelExport, exportImage } from "../three/model";
 dayjs.locale("en");
 
 function Page() {
@@ -46,6 +47,7 @@ function Page() {
       type: "SPHERE",
     },
   ];
+  const modelList: string[] = ["import", "export", "image"];
   const onDragStart = (e: React.DragEvent, item: GeomeryViewObj) => {
     console.log("onDragStart", e, item);
   };
@@ -57,18 +59,49 @@ function Page() {
       x: e.clientX,
       y: e.clientY,
     };
-    if (item.type === "CUBE") prop.BoxGeometry = [5, 5, 5];
-    if (item.type === "CONE") prop.ConeGeometry = [5, 5, 5];
-    if (item.type === "SPHERE") prop.SphereGeometry = [3, 32, 16];
+    if (item.type === GEOMARY.CUBE) prop.BoxGeometry = [5, 5, 5];
+    if (item.type === GEOMARY.CONE) prop.ConeGeometry = [5, 5, 5];
+    if (item.type === GEOMARY.SPHERE) prop.SphereGeometry = [3, 32, 16];
     addGeomery(prop);
     console.log("onDragEnd", e.clientX, e.clientY);
   };
-
-  console.log("ConfigProvider", ConfigProvider.config);
+  useEffect(() => {
+    onModelImport();
+  }, []);
 
   return (
     <ConfigProvider locale={locale}>
       <div className="penel panel-lt">
+        <Space style={{ marginBottom: "8px" }}>
+          {modelList.map((item, i) => {
+            if (item === "import") {
+              return (
+                <Button type="primary" key={i}>
+                  <T t={item}></T>
+                  <input
+                    alt=""
+                    placeholder=""
+                    type="file"
+                    id="download"
+                  ></input>
+                </Button>
+              );
+            } else if (item === "export") {
+              return (
+                <Button type="primary" key={i} onClick={() => onModelExport()}>
+                  <T t={item}></T>
+                </Button>
+              );
+            } else if (item === "image") {
+              return (
+                <Button type="primary" key={i} onClick={() => exportImage()}>
+                  <T t={item}></T>
+                </Button>
+              );
+            }
+          })}
+        </Space>
+        <br />
         <Space>
           {geomeryViewList.map((item, i) => (
             <Button
@@ -82,6 +115,8 @@ function Page() {
             </Button>
           ))}
         </Space>
+
+        <GuiComp></GuiComp>
       </div>
       <div className="penel panel-lb">
         <div style={{ margin: "8px 0px" }}>
@@ -98,7 +133,7 @@ function Page() {
       <div className="penel panel-rt">
         FPS: <span>{frame}</span>
         <br />
-        userData: <span>{JSON.stringify(targetInfo?.userData?.el)}</span>
+        {/* userData: <span>{JSON.stringify(targetInfo?.userData?.el)}</span> */}
       </div>
       <div className="penel panel-rb">
         {/* <Slider defaultValue={30} onChange={onChange} onAfterChange={onAfterChange} />

@@ -1,4 +1,4 @@
-import { GeomeryObj } from "../types/edit";
+import { GEOMARY, GeomeryObj } from "../types/edit";
 import * as THREE from "three";
 import { getRayPos } from "./utils/getRayPos";
 import useStore from "../store";
@@ -16,15 +16,15 @@ function createGeomary() {
         const { BoxGeometry, ConeGeometry, SphereGeometry, type } = el;
         let geometry = null,
           h = 0;
-        if (type === "CUBE" && BoxGeometry) {
+        if (type === GEOMARY.CUBE && BoxGeometry) {
           geometry = new THREE.BoxGeometry(...BoxGeometry);
           h = BoxGeometry[1] / 2;
         }
-        if (type === "CONE" && ConeGeometry) {
+        if (type === GEOMARY.CONE && ConeGeometry) {
           geometry = new THREE.ConeGeometry(...ConeGeometry);
           h = ConeGeometry[1] / 2;
         }
-        if (type === "SPHERE" && SphereGeometry) {
+        if (type === GEOMARY.SPHERE && SphereGeometry) {
           geometry = new THREE.SphereGeometry(...SphereGeometry);
           h = SphereGeometry[0];
         }

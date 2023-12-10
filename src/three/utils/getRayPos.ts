@@ -20,7 +20,6 @@ function getRayPos(x: number, y: number) {
   if (intersects.length > 0) {
     // 获取世界坐标系中的点
     point = intersects[0].point;
-    console.log("World coordinates:", point);
   }
   return point;
 }

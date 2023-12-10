@@ -1,7 +1,5 @@
 import useStore from "../store";
-import * as THREE from "three";
-import { TransformControls } from "./lib/TransformControls";
-
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 const objectControls = () => {
   const { scene, camera, renderer, setTransformControls } = useStore.getState();
   const transformControls = new TransformControls(camera, renderer.domElement);
@@ -11,12 +9,16 @@ const objectControls = () => {
 };
 
 const onTransformControlsChange = (e) => {
-  console.log("onTransformControlsChange", e);
   const { setEditStatus } = useStore.getState();
   setEditStatus("TRANSFORM");
 };
 
 const onWheel = () => {
+  const { setEditStatus } = useStore.getState();
+  setEditStatus("NONE");
+};
+
+const onMouseUp = (e) => {
   const { setEditStatus } = useStore.getState();
   setEditStatus("NONE");
 };
@@ -38,4 +40,10 @@ const onKeydown = (event) => {
       break;
   }
 };
-export { objectControls, onTransformControlsChange, onWheel, onKeydown };
+export {
+  objectControls,
+  onTransformControlsChange,
+  onWheel,
+  onKeydown,
+  onMouseUp,
+};

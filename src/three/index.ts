@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OrbitControls } from "./lib/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import useStore from "../store";
 import { render } from "./render";
 import { watchEvent } from "./eventWatch";
@@ -13,6 +13,11 @@ function sceneRender() {
 
   camera.position.set(0, 5, 10);
   camera.lookAt(scene.position);
+
+  // 创建环境光
+  const ambientLight = new THREE.AmbientLight(0xffffff, 5); // 颜色和强度
+  // 将环境光添加到场景中
+  scene.add(ambientLight);
 
   // 创建网格平面
   const gridHelper = new THREE.GridHelper(30, 30, 0xaaaaaa, 0x444444);

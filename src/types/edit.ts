@@ -3,6 +3,12 @@ export type GeomeryViewObj = {
   parentType: "GEOMARY" | "LIGHT" | "TEXTURE";
 };
 
+export enum GEOMARY {
+  CUBE = "CUBE",
+  CONE = "CONE",
+  SPHERE = "SPHERE",
+}
+
 export type GeomeryObj = {
   gid: string;
   x: number;

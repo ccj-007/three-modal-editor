@@ -25,7 +25,6 @@ function clickLight(e: MouseEvent) {
   // 更新射线投射器的起始点和方向
   const x = e.clientX;
   const y = e.clientY;
-  console.log(" e.clientX", x, y);
 
   // 获取屏幕坐标
   mouse.x = (x / window.innerWidth) * 2 - 1;
@@ -33,14 +32,47 @@ function clickLight(e: MouseEvent) {
 
   raycaster.setFromCamera(mouse, camera);
 
+  // 递归查询Group内的Mesh
+  function findMeshesInGroups(object) {
+    const meshes = [];
+
+    if (object.type === "Group") {
+      object.children.forEach((child) => {
+        if (child.type === "Mesh") {
+          meshes.push(child);
+        } else {
+          meshes.push(...findMeshesInGroups(child));
+        }
+      });
+    }
+
+    return meshes;
+  }
   // 计算射线和几何体的交点
-  const MeshList = scene.children.filter((item) => item.type === "Mesh");
+  const groupsWithMeshes: THREE.Group[] = [];
+  const meshes: THREE.Mesh[] = [];
+  scene.children.forEach((child) => {
+    if (child.type === "Group") {
+      const meshs = findMeshesInGroups(child);
+      if (meshs.length > 0) {
+        groupsWithMeshes.push(...meshs);
+      }
+    } else if (child.type === "Mesh") {
+      meshes.push(child);
+    }
+  });
+  let MeshList = [...meshes, ...groupsWithMeshes];
   if (MeshList.length) {
     const intersects = raycaster.intersectObjects(MeshList);
-    console.log("intersects.length", intersects.length);
 
     // 如果有交点，则对几何体进行高亮处理
     if (intersects.length > 0) {
+      scene.add(transformControls);
+      console.log(
+        "🚀 ~ file: clickLight.ts:71 ~ clickLight ~ scene:",
+        scene.children
+      );
+
       // 取消原来的高亮
       disableHighlight(MeshList);
 
@@ -54,11 +86,9 @@ function clickLight(e: MouseEvent) {
       const edge = new THREE.EdgesGeometry(selected.geometry);
       const edgeMesh = new THREE.LineSegments(edge);
       edgeMesh.position.setFromMatrixPosition(selected.matrixWorld);
-
       selected.userData.highlightEdge = edgeMesh;
 
       setTargetInfo(selected);
-      console.log("selected.userData", selected.userData);
 
       // 物体操作
       transformControls.attach(selected);
@@ -70,6 +100,7 @@ function clickLight(e: MouseEvent) {
     } else {
       // 取消所有原来被选中的几何体的高亮
       disableHighlight(MeshList);
+      scene.remove(transformControls);
     }
   }
 }

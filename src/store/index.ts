@@ -1,6 +1,7 @@
 import { GeomeryObj, Lang } from "../types/edit";
 import { create } from "zustand";
 import * as THREE from "three";
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 
 interface State {
   /** 几何体list */
@@ -18,8 +19,9 @@ interface State {
   locale: Lang;
   /** 帧率 */
   frame: number;
-  /** 帧率 */
-  targetInfo: unknown;
+  /** 目标几何体 */
+  targetInfo: THREE.Mesh;
+  gui: GUI;
   editStatus: "NONE" | "TRANSFORM";
   addGeomery: (v: GeomeryObj) => void;
   setGeomery: (v: GeomeryObj[]) => void;
@@ -35,6 +37,7 @@ interface State {
     >
   ) => void;
   setTransformControls: (v: unknown) => void;
+  setGUI: (v: GUI) => void;
 }
 
 const useStore = create<State>((set) => {
@@ -47,13 +50,22 @@ const useStore = create<State>((set) => {
       0.1,
       1000
     ),
-    renderer: new THREE.WebGLRenderer({ antialias: true }),
+    renderer: new THREE.WebGLRenderer({
+      antialias: true,
+      preserveDrawingBuffer: true,
+    }),
     controls: null,
     needRender: true,
     locale: "en",
     frame: 0,
     targetInfo: {},
     editStatus: "NONE",
+    gui: null,
+    setGUI: (v) =>
+      set((state) => ({
+        ...state,
+        gui: v,
+      })),
     addGeomery: (v) =>
       set((state) => ({
         ...state,

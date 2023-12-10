@@ -68,3 +68,12 @@ body {
 .mr8 {
   margin-right: 8px;
 }
+
+#download {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 72px;
+  height: 32px;
+  opacity: 0;
+}

@@ -1,5 +1,8 @@
 {
     "CUBE": "正方体",
     "CONE": "圆锥",
-    "SPHERE": "球体"
+    "SPHERE": "球体",
+    "import": "导入",
+    "export": "导出",
+    "White model rendering": "白模渲染"
 }
